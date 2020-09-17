@@ -1,4 +1,4 @@
-/**
+
     Title: FibonacciHeap
     File: FibonacciHeap.h
     Author: Tonia Sanzo (sanzo.tonia@gmail.com)
@@ -23,4 +23,4 @@
     (amortized)
     (n = number of elements in priority queue)
     ______________________________________________________________
-*/
+
