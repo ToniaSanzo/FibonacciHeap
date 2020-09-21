@@ -71,7 +71,7 @@ public:
     */
     void print() {
         std::cout << "Content: " << value << " Priority: " << priority << " Degree: " << degree 
-                  << std::endl;
+                  << " Marked: " << marked << std::endl;
         for (auto &child : children) {
             std::cout << "child";
             child->print();
@@ -214,7 +214,7 @@ public:
     */
     void consolidate_tree() {
         // Current root being checked
-        auto current_index = 0;
+        size_t current_index = 0;
 
         // Current degree of the root being checked.
         unsigned current_degree = 0;
@@ -286,7 +286,7 @@ public:
     */
     void rank_grow(unsigned degree) {
         // grow rank to the correct degree size
-        for (auto i = 0; i < degree - (rank.size() - 1); ++i) {
+        for (size_t i = 0; i < degree - (rank.size() - 1); ++i) {
             rank.push_back(nullptr);
         }
     }
@@ -337,8 +337,6 @@ public:
     */
     void change_priority(const T& key, const long long& old_priority , const long long& new_priority) {
         std::shared_ptr<fhNode<T>> parent_node, curr_node;
-        std::vector<std::shared_ptr<fhNode<T>>>::iterator it;
-        
 
         // If the new_priority is not less than the old_priority
         // exit.
@@ -354,20 +352,21 @@ public:
         curr_node->priority = new_priority;
         
         // If the curr_node has a parent.
-        if (curr_node->parent.use_count != 0) {
+        if (curr_node->parent.use_count() != 0) {
             // Initialize parent_node to containe curr_node's parent
             parent_node = curr_node->parent;
 
-            // If the curr_node's priority became less than the curr_node's 
-            // parents priority update the collection.
+            // If the curr_node's priority became less than the
+            // curr_node's parents priority update the collection.
             if (curr_node->priority < parent_node->priority) {
                 // Cut the tree rooted at curr_node, meld into root
                 // list, and unmark the curr_node.
-                it = std::find(parent_node->children.begin(), parent_node->children.end(), curr_node);
+                auto it = std::find(parent_node->children.begin(), parent_node->children.end(), curr_node);
                 parent_node->children.erase(it);
                 roots.push_back(curr_node);
                 curr_node->parent = nullptr;
                 curr_node->marked = false;
+                set_degree(parent_node);
 
                 // While the parent_node is marked, remove the 
                 // necessary nodes from the heap.
@@ -383,22 +382,74 @@ public:
 
                     // Cut the tree rooted at curr_node, meld into
                     // root list, and unmark the curr_node.
-                    it = std::find(parent_node->children.begin(), parent_node->children.end(), curr_node);
+                    auto it = std::find(parent_node->children.begin(), parent_node->children.end(), curr_node);
                     parent_node->children.erase(it);
                     roots.push_back(curr_node);
                     curr_node->parent = nullptr;
                     curr_node->marked = false;
+                    set_degree(parent_node);
                 }
                 
-                // If the parent_node is not a nullptr, mark it.
-                if (parent_node.use_count() == 0) {
+                // If the parent_node is not the nullptr or the
+                // root mark it.
+                if (parent_node.use_count() != 0 && parent_node->parent.use_count() != 0) {
                     parent_node->marked = true;
                 }
             }
-            //__________________IMPLEMENT HERE____________________
-            // Account for the situation where the priority of the current node becomes higher than the priority of the child node.
-            else if() {
-                
+            else {
+                // Check each child to see if the priority has been
+                // violated.
+                bool violated = false;
+                for (auto &child : curr_node->children) {
+                    // If a heap violation occurs reorganize the
+                    // heap.
+                    if (child->priority >= curr_node->priority) {
+                        violated = true;
+
+                        // Cut the tree rooted at child, meld into 
+                        // root list, and unmark the child.
+                        auto it = std::find(curr_node->children.end(), curr_node->children.end(), child);
+                        curr_node->children.erase(it);
+                        roots.push_back(child);
+                        child->parent = nullptr;
+                        child->marked = false;
+                        set_degree(curr_node);
+                    }
+                }
+
+                // If the heap was violated and a child was removed
+                // reorganize the heap. 
+                if (violated) {
+                    parent_node = curr_node;
+
+                    // While the parent_node is marked, remove the 
+                    // necessary nodes from the heap.
+                    while (parent_node->marked) {
+                        curr_node = parent_node;
+                        parent_node = curr_node->parent;
+
+                        // If the parent_node is a nullptr, than
+                        // exit this function.
+                        if (parent_node.use_count() == 0) {
+                            break;
+                        }
+
+                        // Cut the tree rooted at curr_node, meld
+                        // into root list, and unmark the curr_node.
+                        auto it = std::find(parent_node->children.begin(), parent_node->children.end(), curr_node);
+                        parent_node->children.erase(it);
+                        roots.push_back(curr_node);
+                        curr_node->parent = nullptr;
+                        curr_node->marked = false;
+                        set_degree(parent_node);
+                    }
+
+                    // If the parent_node is not the nullptr or the
+                    // root mark it.
+                    if (parent_node.use_count() != 0 && parent_node->parent.use_count() != 0) {
+                        parent_node->marked = true;
+                    }
+                }
             }
         }
     }
@@ -445,5 +496,24 @@ public:
         // After every element has been searched and a match has
         // not been found return the nullptr.
         return nullptr;
+    }
+
+    /*
+    Determine the degree of the current node, given it's children.
+
+    @parameter: node (std::shared_ptr<fhNode<T>>) - Node having its 
+                                                    degree updated
+    */
+    void set_degree(std::shared_ptr<fhNode<T>> &node) {
+        // Set the node's degree to 0.
+        node->degree = 0;
+        
+        // Check each of the node's chidlren and update the node's
+        // degree when necessary.
+        for (const auto &child : node->children) {
+            if (child->degree >= node->degree) {
+                node->degree = child->degree + 1;
+            }
+        }
     }
 };
