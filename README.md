@@ -2,7 +2,7 @@
     File: FibonacciHeap.h
     Author: Tonia Sanzo (sanzo.tonia@gmail.com)
 
-    A fibonacci heap implemented as descriped by Kevin Wayne
+    A fibonacci heap implemented as described by Kevin Wayne
     (wayne@cs.princeton.edu)
     www.cs.princeton.edu/~wayne/teaching/fibonacci-heap.pdf
 
