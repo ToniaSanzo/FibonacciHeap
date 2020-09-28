@@ -12,14 +12,11 @@
 
     ______________________________________________________________
     Priority Queues Performance Cost Summary:
-    make_heap:         O(1)
     is_empty:          O(1)
     insert:            O(1)
     extract_min:       O(log(n))
     delete_min:        O(log(n))
     change_priority:   O(1)
-    delete:            O(log(n))
-    union:             O(1)
     find_min:          O(1)
 
     (amortized)
