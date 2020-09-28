@@ -7,7 +7,7 @@
     www.cs.princeton.edu/~wayne/teaching/fibonacci-heap.pdf
 
     Fibonacci heap was invented by Fredman and Tarjan, 1986.
-    I did extensive QA on this program, but if you do discover
+    I did extensive QA on this program, but if you discover
     a bug please contact me at <sanzo.tonia@gmail.com>
 
     ______________________________________________________________
