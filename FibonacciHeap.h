@@ -1,5 +1,5 @@
 /**
-    Copyright 2020 Tonia Sanzo
+    Copyright 2020 Tonia Sanzo © 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -18,12 +18,12 @@
     File: FibonacciHeap.h
     Author: Tonia Sanzo (sanzo.tonia@gmail.com)
 
-    A fibonacci heap implemented as described by Kevin Wayne
+    A fibonacci heap implemented as descriped by Kevin Wayne
     (wayne@cs.princeton.edu)
     www.cs.princeton.edu/~wayne/teaching/fibonacci-heap.pdf
 
     Fibonacci heap was invented by Fredman and Tarjan, 1986.
-    I did extensive QA on this program, but if you discover
+    I did extensive QA on this program, but if you do discover
     a bug please contact me at <sanzo.tonia@gmail.com>
 
     ______________________________________________________________
@@ -35,7 +35,7 @@
     delete_min:        O(log(n))
     change_priority:   O(1)
     delete:            O(log(n))
-    union:             O(1)
+    +, += [union]:     O(1)
     find_min:          O(1)
 
     (amortized)
@@ -202,6 +202,20 @@ public:
     empty collection.
     */
     FibonacciHeap() {}
+
+    /*
+    Copy constructior, the fibonacciHeap is initialized to the
+    parameter.
+
+    @parameter: copy (FibonacciHeap) - Fibonacci Heap to make this 
+                                       instance a copy of.
+    */
+    FibonacciHeap(const FibonacciHeap<T> &copy) { 
+        min_node = copy.min_node;
+        roots = copy.roots;
+        size = copy.size;
+        rank = copy.rank;
+    }
 
     /*
     Insert a new Node into the fibonacci heap.
@@ -662,5 +676,79 @@ public:
         std::shared_ptr<fhNode<T>> rtn_val = min_node;
         delete_min();
         return rtn_val;
+    }
+
+    /*
+    Returns this collections roots.
+
+    @return: (std::vector<std::shared_ptr<fhNode<T>>>) - Collection of
+                                                         this roots. 
+    */
+    std::vector<std::shared_ptr<fhNode<T>>> get_roots() {
+        /// <summary>
+        /// Returns this collections roots.
+        /// </summary>
+        /// <returns>Collection of
+        /// this roots.</returns>
+        return roots;
+    }
+
+    /*
+    Combine two FibonacciHeaps.
+
+    @parameter: other (FibonacciHeap) - Other collection being
+                                           combined with the current
+                                           collection.
+    */
+    FibonacciHeap<T> operator+(FibonacciHeap<T> &other) {
+        /// <summary>
+        /// Combine two FibonacciHeaps.
+        /// </summary>
+        /// <typeparam name="T">Other collection being
+        /// combined with the current
+        /// collection.</typeparam>
+        FibonacciHeap<T> rtn_val(*this);
+
+        // Update min_node when necessary.
+        if (other.min_node->priority < rtn_val.min_node->priority) {
+            rtn_val.min_node = other.min_node;
+        }
+
+        // Push each root from the other collection into the new 
+        // collection.
+        for (auto &root : other.roots) {
+            rtn_val.roots.push_back(root);
+        }
+
+        return rtn_val;
+    }
+
+    /*
+    Combine two FibonacciHeaps.
+
+    @parameter: other (FibonacciHeap) - Other collection being
+                                           combined with the current
+                                           collection.
+    */
+    FibonacciHeap<T>& operator+=(FibonacciHeap<T> &other) {
+        /// <summary>
+        /// Combine two FibonacciHeaps.
+        /// </summary>
+        /// <typeparam name="T">Other collection being
+        /// combined with the current
+        /// collection.</typeparam>
+
+        // Update min_node when necessary.
+        if (other.min_node->priority < min_node->priority) {
+            min_node = other.min_node;
+        }
+
+        // Push each root from the other collection into the new 
+        // collection.
+        for (auto &root : other.roots) {
+            roots.push_back(root);
+        }
+
+        return *this;
     }
 };
