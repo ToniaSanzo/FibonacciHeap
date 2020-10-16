@@ -47,12 +47,6 @@
 #include <memory>
 #include <vector>
 
-/*
-Node class, each node contains a value, and priority, and is
-implemented in such a way to form a heap.
-
-@typename: (T) - Generic object contained within this node.
-*/
 template <typename T>
 class fhNode {
 /// <summary>
@@ -79,13 +73,6 @@ public:
     // Number of tree layers below this Node.
     unsigned degree = 0;
 
-    /*
-    Construct a Node with a set priority and value, initially set
-    to be a heap of size 1.
-
-    @paramter: value (T) - generic object contained by the node
-    @paramter: priority (long long) - priority key value
-    */
     fhNode(T value, long long priority) {
         /// <summary>
         /// Construct a Node with a set priority and value, initially set
@@ -97,9 +84,6 @@ public:
         this->priority = priority;
     }
 
-    /*
-    Print a Node's content, priority, and children.
-    */
     void print() {
         /// <summary>
         /// Print a Node's content, priority, and children.
@@ -116,15 +100,6 @@ public:
         std::cout << std::endl;
     }
 
-    /*
-    Search a Node's tree structure for a specific Node, return a 
-    pointer to the Node if its found otherwise false.
-
-    @parameter: key (T) - Value contained in the target node.
-    @parameter: priority (long long) - Priority of the target node.
-    @return: (std::shared_ptr<fhNode<T>>) - Pointer to target node;
-                                            otherwise a nullptr.
-    */
     std::shared_ptr<fhNode<T>> search(const T &key, const long long &priority) {
         /// <summary>
         /// Search a Node's tree structure for a specific Node, return a 
@@ -169,12 +144,6 @@ public:
 };
 
 
-/*
-Fibonacci Heap, Similar to binomial heap, but less rigid, lazily
-defers consolidation until next delete_min.
-
-@typename: (T) - Generic object contained within this collection.
-*/
 template <typename T>
 class FibonacciHeap {
 /// <summary>
@@ -217,12 +186,6 @@ public:
         rank = copy.rank;
     }
 
-    /*
-    Insert a new Node into the fibonacci heap.
-
-    @parameter: value (T) - Generic object contained by the node.
-    @parameter: priority (long long) - Priority key value.
-    */
     void insert(const T &value, const long long &priority) {
         /// <summary>
         /// Insert a new Node into the fibonacci heap.
@@ -248,10 +211,6 @@ public:
         ++size;
     }
 
-    /*
-    Delete min and consolidate trees so that no two roots have the
-    same rank.
-    */
     void delete_min() {
         /// <summary>
         /// Delete min and consolidate trees so that no two roots have the
@@ -279,12 +238,7 @@ public:
         // rank.
         consolidate_tree();    
     }
-
-    /*
-    Function to consolidate the trees within the heap. After this 
-    function no trees will have the same (rank/degree/number of tree
-    layers).
-    */
+    
     void consolidate_tree() {
         /// <summary>
         /// Function to consolidate the trees within the heap. After this 
@@ -362,9 +316,6 @@ public:
         clear_rank();
     }
 
-    /*
-    Given a degree grow rank to match that degree
-    */
     void rank_grow(unsigned degree) {
         /// <summary>
         /// Given a degree grow rank to match that degree
@@ -376,9 +327,6 @@ public:
         }
     }
 
-    /*
-    Print the contents of this collection.
-    */
     void print_heap() { 
         /// <summary>
         /// Print the contents of this collection.
@@ -387,9 +335,6 @@ public:
         for (auto &root : roots) { root->print(); }
     }
 
-    /*
-    Set the min_node to the root with the lowest priority.
-    */
     void set_min() {
         /// <summary>
         /// Set the min_node to the root with the lowest priority.
@@ -401,9 +346,6 @@ public:
         }
     }
 
-    /*
-    Clear the contents of rank.
-    */
     void clear_rank() {
         /// <summary>
         /// Clear the contents of rank.
@@ -411,10 +353,6 @@ public:
         for (auto &elem : rank) { elem = nullptr; }
     }
 
-    /*
-    @return: (size_t) The number of elements contained in the
-                      FibonacciHeap.
-    */
     std::size_t get_size() {
         /// <summary>
         /// Returns the number of elements contained in the
@@ -425,10 +363,6 @@ public:
         return size;
     }
 
-    /*
-    @return: (bool) True if there are no elements in the collection;
-                    otherwise false.
-    */
     bool is_empty() {
         /// <summary>
         /// Returns true if there are no elements in the collection;
@@ -439,13 +373,6 @@ public:
         return !(size); 
     }
 
-    /*
-    Change the priority of a key.
-
-    @parameter: key (T) - Value contained by the target node.
-    @parameter: old_priority (long long) - Old priority of the key.
-    @parameter: new_priority (long long) - New priority of the key.
-    */
     void change_priority(const T &key, const long long &old_priority, const long long &new_priority) {
         /// <summary>
         /// Change the priority of a key.
@@ -513,15 +440,6 @@ public:
         set_min();
     }
 
-    /*
-    Given a key, finds and returns a pointer to that key.
-
-    @parameter: key (T) - Target node.
-    @parameter: priority (long long) - Current priority of target 
-                                       node.
-    @return: (std::shared_ptr<fhNode<T>>) - Pointer to target node;
-                                            otherwise a nullptr.
-    */
     std::shared_ptr<fhNode<T>> find(const T& key, const long long& priority) {
         /// <summary>
         /// Given a key, finds and returns a pointer to that key.
@@ -565,13 +483,6 @@ public:
         return nullptr;
     }
 
-    /*
-    Determine the degree of the current node, given it's children.
-    Set the correct degree of each of the parents if necessary.
-
-    @parameter: node (std::shared_ptr<fhNode<T>>) - Node having its 
-                                                    degree updated.
-    */
     void set_degree(std::shared_ptr<fhNode<T>> &node) {
         /// <summary>
         /// Determine the degree of the current node, given it's children.
@@ -599,12 +510,6 @@ public:
         }
     }
 
-    /*
-    Return the minimum node in the priority queue, without removing it.
-
-    @return: (std::shared_ptr<fhNode<T>>) - Pointer to the minimum 
-                                            node in the collection.
-    */
     std::shared_ptr<fhNode<T>> find_min() {
         /// <summary>
         /// Return the minimum node in the priority queue, without removing it.
@@ -614,14 +519,6 @@ public:
         return min_node; 
     }
 
-    /*
-    Recursive utility function that will recurse through the tree and
-    either mark or remove marked node's.
-
-    @parameter: node (std::shared_ptr<fhNode<T>>) - Node being marked 
-                                                    or removed from 
-                                                    the heap.
-    */
     void mark_utility(std::shared_ptr<fhNode<T>> &node) {
         /// <summary>
         /// Recursive utility function that will recurse through the tree and
@@ -658,14 +555,7 @@ public:
         }
     }
 
-    /*
-    Return the minimum node in the collection, the minimum node will 
-    be removed from the collection after this method call.
-
-    @return: (std::shared_ptr<fhNode<T>>) - Pointer to the minimum 
-                                            node in the collection.
-    */
-    std::shared_ptr<fhNode<T>> extract_min() {
+  std::shared_ptr<fhNode<T>> extract_min() {
         /// <summary>
         /// Return the minimum node in the collection, the minimum
         ///  node will be removed from the collection after this
@@ -678,12 +568,6 @@ public:
         return rtn_val;
     }
 
-    /*
-    Returns this collections roots.
-
-    @return: (std::vector<std::shared_ptr<fhNode<T>>>) - Collection of
-                                                         this roots. 
-    */
     std::vector<std::shared_ptr<fhNode<T>>> get_roots() {
         /// <summary>
         /// Returns this collections roots.
@@ -693,13 +577,6 @@ public:
         return roots;
     }
 
-    /*
-    Combine two FibonacciHeaps.
-
-    @parameter: other (FibonacciHeap) - Other collection being
-                                           combined with the current
-                                           collection.
-    */
     FibonacciHeap<T> operator+(FibonacciHeap<T> &other) {
         /// <summary>
         /// Combine two FibonacciHeaps.
@@ -723,14 +600,7 @@ public:
         return rtn_val;
     }
 
-    /*
-    Combine two FibonacciHeaps.
-
-    @parameter: other (FibonacciHeap) - Other collection being
-                                           combined with the current
-                                           collection.
-    */
-    FibonacciHeap<T>& operator+=(FibonacciHeap<T> &other) {
+ FibonacciHeap<T>& operator+=(FibonacciHeap<T> &other) {
         /// <summary>
         /// Combine two FibonacciHeaps.
         /// </summary>
